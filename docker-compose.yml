@@ -1,0 +1,38 @@
+version: '3'
+services:
+
+  web:
+    build: .
+    container_name: web_app_cont
+    volumes:
+      - static_volume:/app/static
+      - media_volume:/app/media
+    env_file:
+      - .env
+    command: >
+      /bin/bash -c "
+      python3 manage.py makemigrations --no-input
+      && python3 manage.py migrate --no-input
+      && python3 manage.py collectstatic --no-input
+      && gunicorn --bind 0.0.0.0:8000 web_core.wsgi"
+    ports:
+      - "8000:8000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  
+  nginix:
+    depends_on:
+      - web
+    image: nginx
+    container_name: nginx_cont
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - static_volume:/app/static
+    ports:
+      - "80:80"
+    restart: always
+
+
+volumes:
+  static_volume:
+  media_volume:

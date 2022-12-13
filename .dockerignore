@@ -1,0 +1,11 @@
+# DOCKER IGNORE
+Dockerfile
+.dockerignore
+*.yml
+
+# NGINX IGNORE
+/nginx/
+
+# PROJECT IGNORE
+/venv/
+/local_scripts/
